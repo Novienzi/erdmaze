@@ -1,0 +1,377 @@
+swagger: '2.0'
+info:
+  description: This is an API to book a tourism package.
+  version: 1.0.0
+  title: Erdmaze API
+  # put the contact info for your development or API team
+  contact:
+    email: novien.indanartha@amartha.com
+
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+
+# tags are used for organizing operations
+tags:
+- name: developers
+  description: Operations available to regular developers
+
+paths:
+  /register:
+    post:
+      tags:
+      - developers
+      summary: add an user data
+      operationId: resgister
+      description: Adds an personal information of user to system
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: users
+        description: Personal data to add
+        schema:
+          $ref: '#/definitions/InputUser'
+      responses:
+        201:
+          description: register success!
+          schema:
+            $ref: '#/definitions/ResponseUser'
+        400:
+          description: invalid input, object invalid
+        409:
+          description: an existing item already exists
+  /login:
+    post:
+      tags:
+      - developers
+      summary: get a token to authentication and authorization
+      operationId: login
+      description: take a personal info from system
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: users
+        description: Personal data to add
+        schema:
+          $ref: '#/definitions/LoginUser'
+      responses:
+        201:
+          description: register success!
+          schema:
+            $ref: '#/definitions/ResponseUser'
+        400:
+          description: invalid input, object invalid
+        409:
+          description: an existing item already exists
+  /profile:
+    get:
+      tags:
+      - developers
+      summary: get a personal info of user
+      operationId: getUser
+      description: take a personal info from system
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        201:
+          description: register success!
+          schema:
+            $ref: '#/definitions/ResponseUser'
+        400:
+          description: invalid input, object invalid
+        409:
+          description: an existing item already exists
+    put:
+      tags:
+      - developers
+      summary: update personal data
+      operationId: updateUser
+      description: to update personal info to system
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: users
+        description: Personal data to add
+        schema:
+          $ref: '#/definitions/InputUser'
+      responses:
+        201:
+          description: register success!
+          schema:
+            $ref: '#/definitions/ResponseUser'
+        400:
+          description: invalid input, object invalid
+        409:
+          description: an existing item already exists
+  /tourism:
+    get:
+      tags:
+      - developers
+      summary: searches tourism package
+      operationId: searchTourism
+      description: |
+        By passing in the appropriate options, you can search for
+        available tourism package
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        name: searchString
+        description: pass an optional search string for looking up tourism package
+        required: false
+        type: string
+      - in: query
+        name: skip
+        description: number of records to skip for pagination
+        type: integer
+        format: int32
+        minimum: 0
+      - in: query
+        name: limit
+        description: maximum number of records to return
+        type: integer
+        format: int32
+        minimum: 0
+        maximum: 50
+      - in: query
+        name: parameter
+        description: pass an location for looking up tourism package
+        required: false
+        type: string
+      - in: query
+        name: parameter
+        description: pass an category for looking up tourism package
+        required: false
+        type: string
+      responses:
+        200:
+          description: search results matching criteria
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ResponseTourism'
+        400:
+          description: bad input parameter
+  /book:
+    post:
+      tags:
+      - developers
+      summary: add data booking
+      operationId: addTourismSchedule
+      description: add data booking to system
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        name: tourismPackageId
+        description: a tourism package id wanna book
+        required: true
+        type: string
+      - in: body
+        name: booking
+        description: schedule and tourism information
+        schema:
+          $ref: '#/definitions/InputBooking'
+      responses:
+        201:
+          description: register success!
+          schema:
+            $ref: '#/definitions/ResponseBooking'
+        400:
+          description: invalid input, object invalid
+        409:
+          description: an existing item already exists
+definitions:
+  InputUser:
+    type: object
+    required:
+    - fullname
+    - phoneNumber
+    - email
+    - password
+    properties:
+      fullname:
+        type: string
+        example: Juliana Xander
+      email:
+        type: string
+        format: email
+        example: juliana.xander@mail.com
+      password:
+        type: string
+        example: juliana@123
+      phoneNumber:
+        type: string
+        format: phone number
+        example: 08123456789
+  LoginUser:
+    type: object
+    required:
+    - email
+    - password
+    properties:
+      email:
+        type: string
+        format: email
+        example: juliana.xander@mail.com
+      password:
+        type: string
+        example: juliana@123
+  ResponseUser:
+    type: object
+    required:
+    - id
+    - fullname
+    - phoneNumber
+    - email
+    - photo
+    properties:
+      id:
+        type: string
+        format: uuid
+        example: d290f1ee-6c54-4b01-90e6-d701748f0851
+      fullname:
+        type: string
+        example: Juliana Xander
+      email:
+        type: string
+        format: email
+        example: juliana.xander@mail.com
+      photo:
+        type: string
+        format : url
+        example: https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png
+      phoneNumber:
+        type: string
+        format: phone number
+        example: 08123456789
+      token:
+        type: string
+        format: token
+  ResponseTourism:
+    type: object
+    required:
+    - id
+    - name
+    - description
+    - total_price
+    - total_time
+    - location
+    - category
+    - address
+    - address_url
+    - itineraries
+    - photos_url
+    properties:
+      id:
+        type: string
+        format: uuid
+        example: d290f1ee-6c54-4b01-90e6-d701748f0851
+      name:
+        type: string
+        example: Bromo
+      description:
+        type: string
+        example: Bromo adalah salah satu...
+      total_price:
+        type: string
+        format : Currency
+        example: Rp. 100000
+      total_time:
+        type: string
+        example: 2 days 1 night
+      location:
+        type: string
+        format: East Java
+      category:
+        type: string
+        format: nature
+      address:
+        type: string
+        format: Area Gn. Bromo, Podokoyo, Tosari, Pasuruan, East Java
+      address_url:
+        type: string
+        format : url
+        example : https://goo.gl/maps/tAztzhXiYte66rs98
+      itineraries :
+        type : array
+        items:
+          type: object
+          $ref: '#/definitions/Itineraries'
+      photos_url :
+        type: array
+        example : [
+        https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png,
+        https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png
+        ]
+  Itineraries:
+    required:
+    - id
+    - name
+    - price
+    properties:
+      id:
+        type: string
+        format: uuid
+        example: d290f1ee-6c54-4b01-90e6-d701748f0851
+      name:
+        type: string
+        example: Bukit Teletubies
+      price:
+        type: string
+        format : Currency
+        example: Rp. 0
+  InputBooking:
+    type: object
+    required:
+    - startTime
+    - endTime
+    properties:
+      startTime:
+        type: string
+        example: 2021-08-06 08:00:00
+      endTime:
+        type: string
+        example: 2021-08-07 08:00:00
+  ResponseBooking : 
+    type: object
+    required:
+    - id
+    - tourism
+    - startTime
+    - endTime
+    - createdAt
+    properties:
+      id:
+        type: string
+        format: uuid
+        example: d290f1ee-6c54-4b01-90e6-d701748f0851
+      tourism :
+          $ref: '#/definitions/ResponseTourism'
+      startTime:
+        type: string
+        example: 2021-08-06 08:00:00
+      endTime:
+        type: string
+        example: 2021-08-07 08:00:00
+      createdAt:
+        type: string
+        example: 2021-07-07 08:00:00
+# Added by API Auto Mocking Plugin
+host: virtserver.swaggerhub.com
+basePath: /Novienzi/erdmaze/1.0.0
+schemes:
+ - https
