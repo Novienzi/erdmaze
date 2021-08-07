@@ -163,6 +163,37 @@ paths:
               $ref: '#/definitions/ResponseTourism'
         400:
           description: bad input parameter
+  /book:
+    post:
+      tags:
+      - developers
+      summary: add data booking
+      operationId: addTourismSchedule
+      description: add data booking to system
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        name: tourismPackageId
+        description: a tourism package id wanna book
+        required: true
+        type: string
+      - in: body
+        name: booking
+        description: schedule and tourism information
+        schema:
+          $ref: '#/definitions/InputBooking'
+      responses:
+        201:
+          description: register success!
+          schema:
+            $ref: '#/definitions/ResponseBooking'
+        400:
+          description: invalid input, object invalid
+        409:
+          description: an existing item already exists
 definitions:
   InputUser:
     type: object
@@ -251,7 +282,7 @@ definitions:
         example: d290f1ee-6c54-4b01-90e6-d701748f0851
       name:
         type: string
-        example: Brom0
+        example: Bromo
       description:
         type: string
         example: Bromo adalah salah satu...
@@ -277,7 +308,9 @@ definitions:
         example : https://goo.gl/maps/tAztzhXiYte66rs98
       itineraries :
         type : array
-        $ref: '#/definitions/Itineraries'
+        items:
+          type: object
+          $ref: '#/definitions/Itineraries'
       photos_url :
         type: array
         example : [
@@ -301,6 +334,42 @@ definitions:
         type: string
         format : Currency
         example: Rp. 0
+  InputBooking:
+    type: object
+    required:
+    - startTime
+    - endTime
+    properties:
+      startTime:
+        type: string
+        example: 2021-08-06 08:00:00
+      endTime:
+        type: string
+        example: 2021-08-07 08:00:00
+  ResponseBooking : 
+    type: object
+    required:
+    - id
+    - tourism
+    - startTime
+    - endTime
+    - createdAt
+    properties:
+      id:
+        type: string
+        format: uuid
+        example: d290f1ee-6c54-4b01-90e6-d701748f0851
+      tourism :
+          $ref: '#/definitions/ResponseTourism'
+      startTime:
+        type: string
+        example: 2021-08-06 08:00:00
+      endTime:
+        type: string
+        example: 2021-08-07 08:00:00
+      createdAt:
+        type: string
+        example: 2021-07-07 08:00:00
 # Added by API Auto Mocking Plugin
 host: virtserver.swaggerhub.com
 basePath: /Novienzi/erdmaze/1.0.0
