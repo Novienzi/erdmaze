@@ -1,0 +1,150 @@
+swagger: '2.0'
+info:
+  description: This is an API to book a tourism package.
+  version: 1.0.0
+  title: Erdmaze API
+  # put the contact info for your development or API team
+  contact:
+    email: novien.indanartha@amartha.com
+
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+
+# tags are used for organizing operations
+tags:
+- name: admins
+  description: Secured Admin-only calls
+- name: developers
+  description: Operations available to regular developers
+
+paths:
+  /register:
+    post:
+      tags:
+      - developers
+      summary: add an user data
+      operationId: resgister
+      description: Adds an personal information of user to system
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: users
+        description: Personal data to add
+        schema:
+          $ref: '#/definitions/InputUser'
+      responses:
+        201:
+          description: register success!
+          schema:
+            $ref: '#/definitions/ResponseUser'
+        400:
+          description: invalid input, object invalid
+        409:
+          description: an existing item already exists
+  /login:
+    post:
+      tags:
+      - developers
+      summary: get a token to authentication and authorization
+      operationId: login
+      description: take a personal info from system
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: users
+        description: Personal data to add
+        schema:
+          $ref: '#/definitions/LoginUser'
+      responses:
+        201:
+          description: register success!
+          schema:
+            $ref: '#/definitions/ResponseUser'
+        400:
+          description: invalid input, object invalid
+        409:
+          description: an existing item already exists
+definitions:
+  InputUser:
+    type: object
+    required:
+    - fullname
+    - phoneNumber
+    - email
+    - password
+    properties:
+      fullname:
+        type: string
+        example: Juliana Xander
+      email:
+        type: string
+        format: email
+        example: juliana.xander@mail.com
+      password:
+        type: string
+        example: juliana@123
+      phoneNumber:
+        type: string
+        format: phone number
+        example: 08123456789
+  LoginUser:
+    type: object
+    required:
+    - email
+    - password
+    properties:
+      email:
+        type: string
+        format: email
+        example: juliana.xander@mail.com
+      password:
+        type: string
+        example: juliana@123
+  ResponseUser:
+    type: object
+    required:
+    - id
+    - fullname
+    - phoneNumber
+    - email
+    - photo
+    properties:
+      id:
+        type: string
+        format: uuid
+        example: d290f1ee-6c54-4b01-90e6-d701748f0851
+      fullname:
+        type: string
+        example: Juliana Xander
+      email:
+        type: string
+        format: email
+        example: juliana.xander@mail.com
+      photo:
+        type: string
+        format : url
+        example: https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png
+      phoneNumber:
+        type: string
+        format: phone number
+        example: 08123456789
+      token:
+        type: string
+        format: token
+  
+      
+
+
+
+# Added by API Auto Mocking Plugin
+host: virtserver.swaggerhub.com
+basePath: /Novienzi/xcidic/1.0.0
+schemes:
+ - https
