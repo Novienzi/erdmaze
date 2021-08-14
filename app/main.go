@@ -5,6 +5,10 @@ import (
 	_userController "erdmaze/controllers/users"
 	_userRepo "erdmaze/drivers/databases/users"
 
+	_activityUsecase "erdmaze/businesses/activities"
+	_activityController "erdmaze/controllers/activities"
+	_activityRepo "erdmaze/drivers/databases/activities"
+
 	_dbDriver "erdmaze/drivers/mysql"
 
 	_middleware "erdmaze/app/middleware"
@@ -52,9 +56,14 @@ func main() {
 	userUsecase := _userUsecase.NewUserUsecase(userRepo, &configJWT, timeoutContext)
 	userCtrl := _userController.NewUserController(userUsecase)
 
+	activityRepo := _activityRepo.NewMySQLActivityRepository(db)
+	activityUseCase := _activityUsecase.NewActivityUsecase(timeoutContext, activityRepo)
+	activityCtrl := _activityController.NewActivityController(activityUseCase)
+
 	routesInit := _routes.ControllerList{
-		JWTMiddleware:  configJWT.Init(),
-		UserController: *userCtrl,
+		JWTMiddleware:      configJWT.Init(),
+		UserController:     *userCtrl,
+		ActivityController: *activityCtrl,
 	}
 	routesInit.RouteRegister(e)
 

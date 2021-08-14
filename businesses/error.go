@@ -13,7 +13,7 @@ var (
 
 	ErrNewsTitleResource = errors.New("(NewsTitle) not found or empty")
 
-	ErrCategoryNotFound = errors.New("category not found")
+	ErrActivityNotFound = errors.New("activitynot found")
 
 	ErrDuplicateData = errors.New("duplicate data")
 
