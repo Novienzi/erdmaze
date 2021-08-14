@@ -1,7 +1,6 @@
 package activities
 
 import (
-	"erdmaze/businesses/activities"
 	activitiesUsecase "erdmaze/businesses/activities"
 	"time"
 
@@ -16,8 +15,8 @@ type Activities struct {
 	DeletedAt gorm.DeletedAt
 }
 
-func (rec *Activities) toDomain() activities.Domain {
-	return activities.Domain{
+func (rec *Activities) toDomain() activitiesUsecase.Domain {
+	return activitiesUsecase.Domain{
 		ID:        rec.ID,
 		Name:      rec.Name,
 		CreatedAt: rec.CreatedAt,
