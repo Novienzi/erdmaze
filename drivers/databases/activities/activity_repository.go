@@ -77,11 +77,6 @@ func (nr *mysqlActivitiesRepository) Store(ctx context.Context, ActivitiesDomain
 		return activities.Domain{}, result.Error
 	}
 
-	err := nr.DB.Preload("Activity").First(&rec, rec.ID).Error
-	if err != nil {
-		return activities.Domain{}, result.Error
-	}
-
 	return rec.toDomain(), nil
 }
 
@@ -90,11 +85,6 @@ func (nr *mysqlActivitiesRepository) Update(ctx context.Context, ActivitiesDomai
 
 	result := nr.DB.Updates(rec)
 	if result.Error != nil {
-		return activities.Domain{}, result.Error
-	}
-
-	err := nr.DB.Preload("Activity").First(&rec, rec.ID).Error
-	if err != nil {
 		return activities.Domain{}, result.Error
 	}
 
@@ -107,11 +97,6 @@ func (nr *mysqlActivitiesRepository) Delete(ctx context.Context, ActivitiesDomai
 	result := nr.DB.Delete(rec)
 
 	if result.Error != nil {
-		return activities.Domain{}, result.Error
-	}
-
-	err := nr.DB.Preload("Activity").First(&rec, rec.ID).Error
-	if err != nil {
 		return activities.Domain{}, result.Error
 	}
 
