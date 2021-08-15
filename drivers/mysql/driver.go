@@ -2,7 +2,9 @@ package mysql_driver
 
 import (
 	activitiesRepo "erdmaze/drivers/databases/activities"
+	locationsRepo "erdmaze/drivers/databases/locations"
 	usersRepo "erdmaze/drivers/databases/users"
+
 	"fmt"
 	"log"
 
@@ -34,6 +36,7 @@ func (config *ConfigDB) InitialDB() *gorm.DB {
 	db.AutoMigrate(
 		&usersRepo.Users{},
 		&activitiesRepo.Activities{},
+		&locationsRepo.Locations{},
 	)
 
 	return db

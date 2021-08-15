@@ -9,6 +9,10 @@ import (
 	_activityController "erdmaze/controllers/activities"
 	_activityRepo "erdmaze/drivers/databases/activities"
 
+	_locationUsecase "erdmaze/businesses/locations"
+	_locationController "erdmaze/controllers/locations"
+	_locationRepo "erdmaze/drivers/databases/locations"
+
 	_dbDriver "erdmaze/drivers/mysql"
 
 	_middleware "erdmaze/app/middleware"
@@ -60,10 +64,15 @@ func main() {
 	activityUseCase := _activityUsecase.NewActivityUsecase(timeoutContext, activityRepo)
 	activityCtrl := _activityController.NewActivityController(activityUseCase)
 
+	locationRepo := _locationRepo.NewMySQLLocationRepository(db)
+	locationUsacase := _locationUsecase.NewLocationUsecase(timeoutContext, locationRepo)
+	locationCtrl := _locationController.NewLocationController(locationUsacase)
+
 	routesInit := _routes.ControllerList{
 		JWTMiddleware:      configJWT.Init(),
 		UserController:     *userCtrl,
 		ActivityController: *activityCtrl,
+		LocationController: *locationCtrl,
 	}
 	routesInit.RouteRegister(e)
 

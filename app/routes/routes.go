@@ -2,6 +2,7 @@ package routes
 
 import (
 	Activities "erdmaze/controllers/activities"
+	"erdmaze/controllers/locations"
 	"erdmaze/controllers/users"
 
 	echo "github.com/labstack/echo/v4"
@@ -12,6 +13,7 @@ type ControllerList struct {
 	JWTMiddleware      middleware.JWTConfig
 	UserController     users.UserController
 	ActivityController Activities.ActivityController
+	LocationController locations.LocationController
 }
 
 func (cl *ControllerList) RouteRegister(e *echo.Echo) {
@@ -25,9 +27,19 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	activity.Use(middleware.JWTWithConfig(cl.JWTMiddleware))
 
 	activity.GET("", cl.ActivityController.GetAll)
-	activity.GET("/id/:id", cl.ActivityController.FindById)
+	activity.GET("/:id", cl.ActivityController.FindById)
 	activity.POST("", cl.ActivityController.Store)
-	activity.PUT("/id/:id", cl.ActivityController.Update)
-	activity.DELETE("/id/:id", cl.ActivityController.Delete)
+	activity.PUT("/:id", cl.ActivityController.Update)
+	activity.DELETE("/:id", cl.ActivityController.Delete)
+
+	//locations...
+	locations := e.Group("v1/api/locations")
+	locations.Use(middleware.JWTWithConfig(cl.JWTMiddleware))
+
+	locations.GET("", cl.LocationController.GetAll)
+	locations.GET("/:id", cl.LocationController.FindById)
+	locations.POST("", cl.LocationController.Store)
+	locations.PUT("/:id", cl.LocationController.Update)
+	locations.DELETE("/:id", cl.LocationController.Delete)
 
 }

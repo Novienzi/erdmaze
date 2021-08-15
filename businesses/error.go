@@ -13,9 +13,11 @@ var (
 
 	ErrNewsTitleResource = errors.New("(NewsTitle) not found or empty")
 
-	ErrActivityNotFound = errors.New("activitynot found")
+	ErrActivityNotFound = errors.New("activity not found")
 
 	ErrDuplicateData = errors.New("duplicate data")
 
 	ErrUsernamePasswordNotFound = errors.New("(Username) or (Password) empty")
+
+	ErrLocationNotFound = errors.New("location not found")
 )
