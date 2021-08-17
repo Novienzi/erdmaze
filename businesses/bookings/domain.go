@@ -8,16 +8,16 @@ import (
 )
 
 type Domain struct {
-	ID                  int
-	UserID              int
-	Fullname            string
-	TourismPackageID    int
-	TourismsPackageName string
-	StartTime           time.Time
-	EndTime             time.Time
-	CreatedAt           time.Time
-	UpdatedAt           time.Time
-	DeletedAt           gorm.DeletedAt
+	ID               int
+	UserID           int
+	User             string
+	TourismPackageID int
+	TourismsPackage  string
+	StartTime        time.Time
+	EndTime          time.Time
+	CreatedAt        time.Time
+	UpdatedAt        time.Time
+	DeletedAt        gorm.DeletedAt
 }
 
 type Usecase interface {

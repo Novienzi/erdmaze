@@ -68,5 +68,6 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 
 	bookings.POST("", cl.BookingsController.Store)
 	bookings.GET("/:id", cl.BookingsController.GetById)
+	bookings.GET("", cl.BookingsController.GetByUserID)
 
 }

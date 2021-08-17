@@ -19,12 +19,10 @@ func NewMySQLBookingsRepository(conn *gorm.DB) bookings.Repository {
 func (repo *mysqlBookingsRepository) GetByUserID(ctx context.Context, userID int) ([]bookings.Domain, error) {
 	rec := []Bookings{}
 
-	err := repo.Conn.Select("bookings.*, activities.name as activity_name , locations.name as location_name").
+	err := repo.Conn.Select("bookings.*, users.fullname as user, tourism_packages.name as tourism_package").
 		Joins("Join users on bookings.user_id = users.id").
-		Joins("tourism_packages on bookings.tourism_package_id = tourism_packages.id").
-		Joins("JOIN activities on activities.id = tourism_packages.activity_id").
-		Joins("JOIN locations on locations.id = tourism_packages.location_id").
-		Where("bookings.id = ?", userID).Find(&rec).Error
+		Joins("Join tourism_packages on bookings.tourism_package_id = tourism_packages.id").
+		Where("bookings.user_id = ?", userID).Find(&rec).Error
 
 	if err != nil {
 		return []bookings.Domain{}, err
@@ -40,7 +38,11 @@ func (repo *mysqlBookingsRepository) GetByUserID(ctx context.Context, userID int
 
 func (repo *mysqlBookingsRepository) GetByID(ctx context.Context, ID int) (bookings.Domain, error) {
 	rec := Bookings{}
-	err := repo.Conn.Joins("Users").Joins("TourismPackage").Where("bookings.id = ?", ID).First(&rec).Error
+	err := repo.Conn.Select("bookings.*, users.fullname as user, tourism_packages.name as tourism_package").
+		Joins("Join users on bookings.user_id = users.id").
+		Joins("Join tourism_packages on bookings.tourism_package_id = tourism_packages.id").
+		Where("bookings.id = ?", ID).First(&rec).Error
+
 	if err != nil {
 		return bookings.Domain{}, err
 	}

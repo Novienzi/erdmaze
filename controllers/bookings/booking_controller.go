@@ -27,9 +27,12 @@ func NewBookingsController(uc bookings.Usecase) *BookingsController {
 
 func (ctrl *BookingsController) GetByUserID(c echo.Context) error {
 	ctx := c.Request().Context()
-	userID, err := strconv.Atoi(c.Param("user_id"))
+	user, err := ctrl.jwtAuth.GetUser(c)
+	if err != nil {
+		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
+	}
 
-	resp, err := ctrl.bookingsUseCase.GetByUserID(ctx, userID)
+	resp, err := ctrl.bookingsUseCase.GetByUserID(ctx, user.ID)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
