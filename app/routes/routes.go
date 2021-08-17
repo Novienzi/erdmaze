@@ -2,6 +2,7 @@ package routes
 
 import (
 	Activities "erdmaze/controllers/activities"
+	"erdmaze/controllers/bookings"
 	"erdmaze/controllers/locations"
 	"erdmaze/controllers/tourism_packages"
 	"erdmaze/controllers/users"
@@ -16,6 +17,7 @@ type ControllerList struct {
 	ActivityController        Activities.ActivityController
 	LocationController        locations.LocationController
 	TourismPackagesController tourism_packages.TourismPackagesController
+	BookingsController        bookings.BookingsController
 }
 
 func (cl *ControllerList) RouteRegister(e *echo.Echo) {
@@ -52,5 +54,11 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	tourismPackages.GET("", cl.TourismPackagesController.GetAll)
 	tourismPackages.GET("/:id", cl.TourismPackagesController.FindById)
 	tourismPackages.POST("", cl.TourismPackagesController.Store)
+
+	//tourism_packages...
+	bookings := e.Group("v1/api/bookings")
+	bookings.Use(middleware.JWTWithConfig(cl.JWTMiddleware))
+
+	bookings.POST("", cl.BookingsController.Store)
 
 }

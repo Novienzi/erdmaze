@@ -24,4 +24,8 @@ var (
 	ErrTourismsIDResource = errors.New("(TourismsID) not found or empty")
 
 	ErrTourismsNameResource = errors.New("(TourismsName) not found or empty")
+
+	ErrBookingsIDResource = errors.New("(BookingsID) not found or empty")
+
+	ErrBookingsNameResource = errors.New("(BookingsName) not found or empty")
 )

@@ -2,6 +2,7 @@ package mysql_driver
 
 import (
 	activitiesRepo "erdmaze/drivers/databases/activities"
+	bookingsRepo "erdmaze/drivers/databases/bookings"
 	locationsRepo "erdmaze/drivers/databases/locations"
 	tourismRepo "erdmaze/drivers/databases/tourism_packages"
 	usersRepo "erdmaze/drivers/databases/users"
@@ -39,6 +40,7 @@ func (config *ConfigDB) InitialDB() *gorm.DB {
 		&activitiesRepo.Activities{},
 		&locationsRepo.Locations{},
 		&tourismRepo.TourismPackages{},
+		&bookingsRepo.Bookings{},
 	)
 
 	return db
