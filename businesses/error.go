@@ -20,4 +20,8 @@ var (
 	ErrUsernamePasswordNotFound = errors.New("(Username) or (Password) empty")
 
 	ErrLocationNotFound = errors.New("location not found")
+
+	ErrTourismsIDResource = errors.New("(TourismsID) not found or empty")
+
+	ErrTourismsNameResource = errors.New("(TourismsName) not found or empty")
 )

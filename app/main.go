@@ -13,6 +13,10 @@ import (
 	_locationController "erdmaze/controllers/locations"
 	_locationRepo "erdmaze/drivers/databases/locations"
 
+	_tourismUsecase "erdmaze/businesses/tourism_packages"
+	_tourismController "erdmaze/controllers/tourism_packages"
+	_tourismRepo "erdmaze/drivers/databases/tourism_packages"
+
 	_dbDriver "erdmaze/drivers/mysql"
 
 	_middleware "erdmaze/app/middleware"
@@ -68,11 +72,16 @@ func main() {
 	locationUsacase := _locationUsecase.NewLocationUsecase(timeoutContext, locationRepo)
 	locationCtrl := _locationController.NewLocationController(locationUsacase)
 
+	tourismRepo := _tourismRepo.NewMySQLTourismPackagesRepository(db)
+	tourismUsacase := _tourismUsecase.NewTourismPackagesUsecase(tourismRepo, activityUseCase, locationUsacase, timeoutContext)
+	tourismCtrl := _tourismController.NewTourismPackagesController(tourismUsacase)
+
 	routesInit := _routes.ControllerList{
-		JWTMiddleware:      configJWT.Init(),
-		UserController:     *userCtrl,
-		ActivityController: *activityCtrl,
-		LocationController: *locationCtrl,
+		JWTMiddleware:             configJWT.Init(),
+		UserController:            *userCtrl,
+		ActivityController:        *activityCtrl,
+		LocationController:        *locationCtrl,
+		TourismPackagesController: *tourismCtrl,
 	}
 	routesInit.RouteRegister(e)
 

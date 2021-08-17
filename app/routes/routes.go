@@ -3,6 +3,7 @@ package routes
 import (
 	Activities "erdmaze/controllers/activities"
 	"erdmaze/controllers/locations"
+	"erdmaze/controllers/tourism_packages"
 	"erdmaze/controllers/users"
 
 	echo "github.com/labstack/echo/v4"
@@ -10,10 +11,11 @@ import (
 )
 
 type ControllerList struct {
-	JWTMiddleware      middleware.JWTConfig
-	UserController     users.UserController
-	ActivityController Activities.ActivityController
-	LocationController locations.LocationController
+	JWTMiddleware             middleware.JWTConfig
+	UserController            users.UserController
+	ActivityController        Activities.ActivityController
+	LocationController        locations.LocationController
+	TourismPackagesController tourism_packages.TourismPackagesController
 }
 
 func (cl *ControllerList) RouteRegister(e *echo.Echo) {
@@ -41,5 +43,14 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	locations.POST("", cl.LocationController.Store)
 	locations.PUT("/:id", cl.LocationController.Update)
 	locations.DELETE("/:id", cl.LocationController.Delete)
+
+	//tourism_packages...
+	tourismPackages := e.Group("v1/api/tourism")
+	tourismPackages.Use(middleware.JWTWithConfig(cl.JWTMiddleware))
+
+	tourismPackages.GET("/pagination", cl.TourismPackagesController.SelectAll)
+	tourismPackages.GET("", cl.TourismPackagesController.GetAll)
+	tourismPackages.GET("/:id", cl.TourismPackagesController.FindById)
+	tourismPackages.POST("", cl.TourismPackagesController.Store)
 
 }
