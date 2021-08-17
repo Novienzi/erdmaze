@@ -18,30 +18,6 @@ func NewBookingsUsecase(br Repository, timeout time.Duration) Usecase {
 	}
 }
 
-func (uc *bookingsUsecase) Fetch(ctx context.Context, page, perpage int) ([]Domain, int, int, error) {
-	ctx, cancel := context.WithTimeout(ctx, uc.contextTimeout)
-	defer cancel()
-
-	if page <= 0 {
-		page = 1
-	}
-	if perpage <= 0 {
-		perpage = 10
-	}
-
-	res, total, err := uc.bookingsRepository.Fetch(ctx, page, perpage)
-	lastPage := total / perpage
-
-	if total%perpage > 0 {
-		lastPage += 1
-	}
-
-	if err != nil {
-		return []Domain{}, 0, 1, err
-	}
-	return res, total, lastPage, nil
-}
-
 func (uc *bookingsUsecase) GetByUserID(ctx context.Context, UserID int) ([]Domain, error) {
 	resp, err := uc.bookingsRepository.GetByUserID(ctx, UserID)
 	if err != nil {
@@ -55,7 +31,7 @@ func (uc *bookingsUsecase) GetByID(ctx context.Context, ID int) (Domain, error) 
 	defer cancel()
 
 	if ID <= 0 {
-		return Domain{}, usecase.ErrBookingsIDResource
+		return Domain{}, usecase.ErrNotFound
 	}
 	res, err := uc.bookingsRepository.GetByID(ctx, ID)
 	if err != nil {
@@ -69,9 +45,9 @@ func (uc *bookingsUsecase) Store(ctx context.Context, bookingDomain *Domain) (Do
 	ctx, cancel := context.WithTimeout(ctx, uc.contextTimeout)
 	defer cancel()
 
-	existedFavourites, _ := uc.bookingsRepository.GetByID(ctx, bookingDomain.ID)
+	existedBooking, _ := uc.bookingsRepository.GetByID(ctx, bookingDomain.ID)
 
-	if existedFavourites != (Domain{}) {
+	if existedBooking != (Domain{}) {
 		return Domain{}, usecase.ErrDuplicateData
 	}
 
@@ -81,4 +57,19 @@ func (uc *bookingsUsecase) Store(ctx context.Context, bookingDomain *Domain) (Do
 	}
 
 	return result, nil
+}
+
+func (uc *bookingsUsecase) Delete(ctx context.Context, bookingDomain *Domain) (*Domain, error) {
+	existedBooking, err := uc.bookingsRepository.GetByID(ctx, bookingDomain.ID)
+	if err != nil {
+		return &Domain{}, err
+	}
+	bookingDomain.ID = existedBooking.ID
+
+	result, err := uc.bookingsRepository.Delete(ctx, bookingDomain)
+	if err != nil {
+		return &Domain{}, err
+	}
+
+	return &result, nil
 }

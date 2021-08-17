@@ -67,5 +67,6 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	bookings.Use(middleware.JWTWithConfig(cl.JWTMiddleware))
 
 	bookings.POST("", cl.BookingsController.Store)
+	bookings.GET("/:id", cl.BookingsController.GetById)
 
 }

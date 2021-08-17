@@ -10,7 +10,7 @@ import (
 type Domain struct {
 	ID                  int
 	UserID              int
-	Username            string
+	Fullname            string
 	TourismPackageID    int
 	TourismsPackageName string
 	StartTime           time.Time
@@ -21,15 +21,15 @@ type Domain struct {
 }
 
 type Usecase interface {
-	Fetch(ctx context.Context, page, perpage int) ([]Domain, int, int, error)
-	Store(ctx context.Context, bookingsDomain *Domain) (Domain, error)
 	GetByUserID(ctx context.Context, userID int) ([]Domain, error)
-	GetByID(ctx context.Context, locationId int) (Domain, error)
+	GetByID(ctx context.Context, ID int) (Domain, error)
+	Store(ctx context.Context, bookingDomain *Domain) (Domain, error)
+	Delete(ctx context.Context, bookingDomain *Domain) (*Domain, error)
 }
 
 type Repository interface {
-	Fetch(ctx context.Context, page, perpage int) ([]Domain, int, error)
-	GetByID(ctx context.Context, bookingsId int) (Domain, error)
-	Store(ctx context.Context, bookingsDomain *Domain) (Domain, error)
 	GetByUserID(ctx context.Context, userID int) ([]Domain, error)
+	GetByID(ctx context.Context, ID int) (Domain, error)
+	Store(ctx context.Context, bookingDomain *Domain) (Domain, error)
+	Delete(ctx context.Context, bookingDomain *Domain) (Domain, error)
 }
