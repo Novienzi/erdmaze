@@ -72,22 +72,11 @@ func (cr *mysqlTourismPackagesRepository) GetAll(ctx context.Context, tourismNam
 		}
 	}
 
-	if locationName != " " {
+	if locationName != " " || activityName != " " {
 		err := cr.Conn.Select("tourism_packages.*, activities.name as activity_name , locations.name as location_name").Debug().
 			Joins("JOIN activities on activities.id = tourism_packages.activity_id").
 			Joins("JOIN locations on locations.id = tourism_packages.location_id").
-			Where("locations.name LIKE ?", "%"+locationName+"%").Find(&rec).Error
-
-		if err != nil {
-			return []tourismpackages.Domain{}, err
-		}
-	}
-
-	if activityName != " " {
-		err := cr.Conn.Select("tourism_packages.*, activities.name as activity_name , locations.name as location_name").Debug().
-			Joins("JOIN activities on activities.id = tourism_packages.activity_id").
-			Joins("JOIN locations on locations.id = tourism_packages.location_id").
-			Where("activities.name LIKE ?", "%"+activityName+"%").Find(&rec).Error
+			Where("locations.name LIKE ? AND activities.name LIKE ?", "%"+locationName+"%", "%"+activityName+"%").Find(&rec).Error
 
 		if err != nil {
 			return []tourismpackages.Domain{}, err

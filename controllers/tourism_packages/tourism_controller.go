@@ -59,19 +59,41 @@ func (ctrl *TourismPackagesController) GetAll(c echo.Context) error {
 
 func (ctrl *TourismPackagesController) SelectAll(c echo.Context) error {
 	ctx := c.Request().Context()
-	page, _ := strconv.Atoi(c.QueryParam("page"))
+	page := c.QueryParam("page")
+	offset := c.QueryParam("limit")
 
-	resp, _, err := ctrl.tourismPackagesUseCase.Fetch(ctx, page, 10)
+	var varPage response.Pagination
+
+	p, err := strconv.Atoi(page)
+	if err != nil {
+		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
+	}
+
+	o, err := strconv.Atoi(offset)
+	if err != nil {
+		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
+	}
+
+	resp, count, lastPage, err := ctrl.tourismPackagesUseCase.Fetch(ctx, p, o)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
+
+	if err != nil {
+		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+	}
+
+	varPage.CurrentPage = p
+	varPage.LastPage = lastPage
+	varPage.PerPage = o
+	varPage.Total = count
 
 	responseController := []response.TourismPackages{}
 	for _, value := range resp {
 		responseController = append(responseController, response.FromDomain(value))
 	}
 
-	return controller.NewSuccessResponse(c, responseController)
+	return controller.NewSuccessResponseFetch(c, responseController, varPage)
 }
 
 func (ctrl *TourismPackagesController) FindById(c echo.Context) error {

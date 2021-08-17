@@ -25,7 +25,7 @@ func NewTourismPackagesUsecase(nr Repository, cu activities.Usecase, lu location
 	}
 }
 
-func (nu *tourismPackagesUsecase) Fetch(ctx context.Context, page, perpage int) ([]Domain, int, error) {
+func (nu *tourismPackagesUsecase) Fetch(ctx context.Context, page, perpage int) ([]Domain, int, int, error) {
 	ctx, cancel := context.WithTimeout(ctx, nu.contextTimeout)
 	defer cancel()
 
@@ -33,15 +33,20 @@ func (nu *tourismPackagesUsecase) Fetch(ctx context.Context, page, perpage int) 
 		page = 1
 	}
 	if perpage <= 0 {
-		perpage = 25
+		perpage = 10
 	}
 
 	res, total, err := nu.tourismPackagesRepository.Fetch(ctx, page, perpage)
-	if err != nil {
-		return []Domain{}, 0, err
+	lastPage := total / perpage
+
+	if total%perpage > 0 {
+		lastPage += 1
 	}
 
-	return res, total, nil
+	if err != nil {
+		return []Domain{}, 0, 1, err
+	}
+	return res, total, lastPage, nil
 }
 
 func (nu *tourismPackagesUsecase) Store(ctx context.Context, tourismPackagesDomain *Domain) (Domain, error) {

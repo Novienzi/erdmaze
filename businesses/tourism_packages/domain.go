@@ -25,7 +25,7 @@ type Domain struct {
 }
 
 type Usecase interface {
-	Fetch(ctx context.Context, page, perpage int) ([]Domain, int, error)
+	Fetch(ctx context.Context, page, perpage int) ([]Domain, int, int, error)
 	Store(ctx context.Context, tourismPackagesDomain *Domain) (Domain, error)
 	GetAll(ctx context.Context, tourismName string, locationName string, activityName string) ([]Domain, error)
 	GetByID(ctx context.Context, locationId int) (Domain, error)
