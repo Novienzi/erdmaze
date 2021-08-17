@@ -24,6 +24,13 @@ func (cl *ControllerList) RouteRegister(e *echo.Echo) {
 	users.POST("/login", cl.UserController.Login)
 	users.GET("/:id", cl.UserController.GetUserDetail, middleware.JWTWithConfig(cl.JWTMiddleware))
 
+	//Users ...
+	user := e.Group("v1/api/profile")
+	user.Use(middleware.JWTWithConfig(cl.JWTMiddleware))
+
+	user.GET("", cl.UserController.FindByToken)
+	user.PUT("", cl.UserController.Update)
+
 	//activities...
 	activity := e.Group("v1/api/activities")
 	activity.Use(middleware.JWTWithConfig(cl.JWTMiddleware))
