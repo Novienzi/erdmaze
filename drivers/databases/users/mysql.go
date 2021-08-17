@@ -3,6 +3,7 @@ package users
 import (
 	"context"
 	"erdmaze/businesses/users"
+	"fmt"
 
 	"gorm.io/gorm"
 )
@@ -66,4 +67,22 @@ func (nr *mysqlUsersRepository) Store(ctx context.Context, userDomain *users.Dom
 	}
 
 	return nil
+}
+
+func (repo *mysqlUsersRepository) Update(ctx context.Context, usersDomain *users.Domain) (users.Domain, error) {
+	rec := fromDomain(*usersDomain)
+
+	result := repo.Conn.Updates(rec)
+	if result.Error != nil {
+		return users.Domain{}, result.Error
+	}
+
+	err := repo.Conn.Preload("Users").First(&rec).Error
+	if err != nil {
+		return users.Domain{}, result.Error
+	}
+
+	fmt.Println("ini rec", result)
+
+	return rec.toDomain(), nil
 }

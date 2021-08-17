@@ -84,3 +84,18 @@ func (uc *userUsecase) GetByID(ctx context.Context, userId int) (Domain, error) 
 
 	return res, nil
 }
+
+func (cu *userUsecase) Update(ctx context.Context, usersDomain *Domain) (*Domain, error) {
+	existedUsers, err := cu.userRepository.GetByID(ctx, usersDomain.Id)
+	if err != nil {
+		return &Domain{}, err
+	}
+	usersDomain.Id = existedUsers.Id
+
+	result, err := cu.userRepository.Update(ctx, usersDomain)
+	if err != nil {
+		return &Domain{}, err
+	}
+
+	return &result, nil
+}

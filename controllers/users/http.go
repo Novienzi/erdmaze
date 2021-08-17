@@ -1,9 +1,11 @@
 package users
 
 import (
+	"erdmaze/app/middleware"
 	"erdmaze/businesses/users"
 	controller "erdmaze/controllers"
 	"erdmaze/controllers/users/request"
+	"erdmaze/controllers/users/response"
 	"net/http"
 	"strconv"
 
@@ -12,6 +14,7 @@ import (
 
 type UserController struct {
 	userUseCase users.Usecase
+	jwtAuth     *middleware.ConfigJWT
 }
 
 func NewUserController(uc users.Usecase) *UserController {
@@ -76,4 +79,44 @@ func (ctrl *UserController) GetUserDetail(c echo.Context) error {
 
 	return controller.NewSuccessResponse(c, user)
 
+}
+
+func (ctrl *UserController) FindByToken(c echo.Context) error {
+	ctx := c.Request().Context()
+
+	user, err := ctrl.jwtAuth.GetUser(c)
+	if err != nil {
+		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
+	}
+
+	id, err := ctrl.userUseCase.GetByID(ctx, user.ID)
+
+	if err != nil {
+		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
+	}
+
+	return controller.NewSuccessResponse(c, id)
+}
+
+func (ctrl *UserController) Update(c echo.Context) error {
+	ctx := c.Request().Context()
+
+	user, err := ctrl.jwtAuth.GetUser(c)
+	if err != nil {
+		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
+	}
+
+	req := request.Users{}
+	if err := c.Bind(&req); err != nil {
+		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
+	}
+
+	domainReq := req.ToDomain()
+	domainReq.Id = user.ID
+	resp, err := ctrl.userUseCase.Update(ctx, domainReq)
+	if err != nil {
+		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
+	}
+
+	return controller.NewSuccessResponse(c, response.FromDomain(*resp))
 }
