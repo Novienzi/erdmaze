@@ -17,28 +17,6 @@ func NewMySQLLocationRepository(conn *gorm.DB) locations.Repository {
 	}
 }
 
-func (cr *mysqlLocationsRepository) Fetch(ctx context.Context, page, perpage int) ([]locations.Domain, int, error) {
-	rec := []Locations{}
-
-	offset := (page - 1) * perpage
-	err := cr.DB.Find(&rec).Offset(offset).Limit(perpage).Error
-	if err != nil {
-		return []locations.Domain{}, 0, err
-	}
-
-	var totalData int64
-	err = cr.DB.Model(&rec).Count(&totalData).Error
-	if err != nil {
-		return []locations.Domain{}, 0, err
-	}
-
-	var domainLocation []locations.Domain
-	for _, value := range rec {
-		domainLocation = append(domainLocation, value.toDomain())
-	}
-	return domainLocation, int(totalData), nil
-}
-
 func (cr *mysqlLocationsRepository) Find(ctx context.Context) ([]locations.Domain, error) {
 	rec := []Locations{}
 
@@ -73,29 +51,6 @@ func (nr *mysqlLocationsRepository) Store(ctx context.Context, LocationDomain *l
 	rec := fromDomain(LocationDomain)
 
 	result := nr.DB.Select("Name", "CreatedAt").Create(&rec)
-	if result.Error != nil {
-		return locations.Domain{}, result.Error
-	}
-
-	return rec.toDomain(), nil
-}
-
-func (nr *mysqlLocationsRepository) Update(ctx context.Context, LocationDomain *locations.Domain) (locations.Domain, error) {
-	rec := fromDomain(LocationDomain)
-
-	result := nr.DB.Updates(rec)
-	if result.Error != nil {
-		return locations.Domain{}, result.Error
-	}
-
-	return rec.toDomain(), nil
-}
-
-func (nr *mysqlLocationsRepository) Delete(ctx context.Context, LocationDomain *locations.Domain) (locations.Domain, error) {
-	rec := fromDomain(LocationDomain)
-
-	result := nr.DB.Delete(rec)
-
 	if result.Error != nil {
 		return locations.Domain{}, result.Error
 	}
