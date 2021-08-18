@@ -4,10 +4,8 @@ import (
 	"erdmaze/businesses/locations"
 	"erdmaze/controllers/locations/request"
 	"erdmaze/controllers/locations/response"
-	"errors"
 	"net/http"
 	"strconv"
-	"strings"
 
 	controller "erdmaze/controllers"
 
@@ -28,23 +26,6 @@ func (ctrl *LocationController) GetAll(c echo.Context) error {
 	ctx := c.Request().Context()
 
 	resp, err := ctrl.locationUsecase.GetAll(ctx)
-	if err != nil {
-		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
-	}
-
-	responseController := []response.Location{}
-	for _, value := range resp {
-		responseController = append(responseController, response.FromDomain(value))
-	}
-
-	return controller.NewSuccessResponse(c, responseController)
-}
-
-func (ctrl *LocationController) SelectAll(c echo.Context) error {
-	ctx := c.Request().Context()
-	page, _ := strconv.Atoi(c.QueryParam("page"))
-
-	resp, _, err := ctrl.locationUsecase.Fetch(ctx, page, 10)
 	if err != nil {
 		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
 	}
@@ -90,52 +71,4 @@ func (ctrl *LocationController) Store(c echo.Context) error {
 	}
 
 	return controller.NewSuccessResponse(c, response.FromDomain(resp))
-}
-
-func (ctrl *LocationController) Update(c echo.Context) error {
-	ctx := c.Request().Context()
-
-	id := c.Param("id")
-	if strings.TrimSpace(id) == "" {
-		return controller.NewErrorResponse(c, http.StatusBadRequest, errors.New("missing required id"))
-	}
-
-	req := request.Locations{}
-	if err := c.Bind(&req); err != nil {
-		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
-	}
-
-	domainReq := req.ToDomain()
-	idInt, _ := strconv.Atoi(id)
-	domainReq.ID = idInt
-	resp, err := ctrl.locationUsecase.Update(ctx, domainReq)
-	if err != nil {
-		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
-	}
-
-	return controller.NewSuccessResponse(c, response.FromDomain(*resp))
-}
-
-func (ctrl *LocationController) Delete(c echo.Context) error {
-	ctx := c.Request().Context()
-
-	id := c.Param("id")
-	if strings.TrimSpace(id) == "" {
-		return controller.NewErrorResponse(c, http.StatusBadRequest, errors.New("missing required id"))
-	}
-
-	req := request.Locations{}
-	if err := c.Bind(&req); err != nil {
-		return controller.NewErrorResponse(c, http.StatusBadRequest, err)
-	}
-
-	domainReq := req.ToDomain()
-	idInt, _ := strconv.Atoi(id)
-	domainReq.ID = idInt
-	resp, err := ctrl.locationUsecase.Delete(ctx, domainReq)
-	if err != nil {
-		return controller.NewErrorResponse(c, http.StatusInternalServerError, err)
-	}
-
-	return controller.NewSuccessResponse(c, response.FromDomain(*resp))
 }

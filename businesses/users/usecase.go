@@ -75,7 +75,7 @@ func (uc *userUsecase) GetByID(ctx context.Context, userId int) (Domain, error) 
 	defer cancel()
 
 	if userId <= 0 {
-		return Domain{}, businesses.ErrNewsIDResource
+		return Domain{}, businesses.ErrNotFound
 	}
 	res, err := uc.userRepository.GetByID(ctx, userId)
 	if err != nil {

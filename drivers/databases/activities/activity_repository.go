@@ -17,28 +17,6 @@ func NewMySQLActivityRepository(conn *gorm.DB) activities.Repository {
 	}
 }
 
-func (cr *mysqlActivitiesRepository) Fetch(ctx context.Context, page, perpage int) ([]activities.Domain, int, error) {
-	rec := []Activities{}
-
-	offset := (page - 1) * perpage
-	err := cr.DB.Find(&rec).Offset(offset).Limit(perpage).Error
-	if err != nil {
-		return []activities.Domain{}, 0, err
-	}
-
-	var totalData int64
-	err = cr.DB.Model(&rec).Count(&totalData).Error
-	if err != nil {
-		return []activities.Domain{}, 0, err
-	}
-
-	var domainActivity []activities.Domain
-	for _, value := range rec {
-		domainActivity = append(domainActivity, value.toDomain())
-	}
-	return domainActivity, int(totalData), nil
-}
-
 func (cr *mysqlActivitiesRepository) Find(ctx context.Context) ([]activities.Domain, error) {
 	rec := []Activities{}
 
@@ -73,29 +51,6 @@ func (nr *mysqlActivitiesRepository) Store(ctx context.Context, ActivitiesDomain
 	rec := fromDomain(ActivitiesDomain)
 
 	result := nr.DB.Select("Name", "CreatedAt").Create(&rec)
-	if result.Error != nil {
-		return activities.Domain{}, result.Error
-	}
-
-	return rec.toDomain(), nil
-}
-
-func (nr *mysqlActivitiesRepository) Update(ctx context.Context, ActivitiesDomain *activities.Domain) (activities.Domain, error) {
-	rec := fromDomain(ActivitiesDomain)
-
-	result := nr.DB.Updates(rec)
-	if result.Error != nil {
-		return activities.Domain{}, result.Error
-	}
-
-	return rec.toDomain(), nil
-}
-
-func (nr *mysqlActivitiesRepository) Delete(ctx context.Context, ActivitiesDomain *activities.Domain) (activities.Domain, error) {
-	rec := fromDomain(ActivitiesDomain)
-
-	result := nr.DB.Delete(rec)
-
 	if result.Error != nil {
 		return activities.Domain{}, result.Error
 	}

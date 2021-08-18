@@ -19,13 +19,13 @@ type Domain struct {
 type Usecase interface {
 	Login(ctx context.Context, username, password string) (string, error)
 	Store(ctx context.Context, data *Domain) error
-	GetByID(ctx context.Context, newsId int) (Domain, error)
+	GetByID(ctx context.Context, Id int) (Domain, error)
 	Update(ctx context.Context, usersDomain *Domain) (*Domain, error)
 }
 
 type Repository interface {
 	GetByUsername(ctx context.Context, username string) (Domain, error)
 	Store(ctx context.Context, data *Domain) error
-	GetByID(ctx context.Context, newsId int) (Domain, error)
+	GetByID(ctx context.Context, Id int) (Domain, error)
 	Update(ctx context.Context, usersDomain *Domain) (Domain, error)
 }
